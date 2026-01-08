@@ -1,0 +1,313 @@
+/**
+ * Enhanced Checklists Power-Up Styles
+ */
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #172b4d;
+    background-color: #fff;
+    padding: 12px;
+}
+
+#content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Typography */
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #172b4d;
+}
+
+h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #172b4d;
+}
+
+p {
+    margin-bottom: 12px;
+}
+
+/* Buttons */
+.button {
+    display: inline-block;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 3px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.button.primary {
+    background-color: #0079bf;
+    color: #fff;
+}
+
+.button.primary:hover {
+    background-color: #026aa7;
+}
+
+.button.danger {
+    background-color: #eb5a46;
+    color: #fff;
+}
+
+.button.danger:hover {
+    background-color: #cf513d;
+}
+
+/* Sections */
+.section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #dfe1e6;
+}
+
+.section:last-child {
+    border-bottom: none;
+}
+
+/* Item Detail View */
+.item-detail-view {
+    padding: 8px 0;
+}
+
+.item-title {
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #0079bf;
+}
+
+/* Description Section */
+.description-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    margin-bottom: 8px;
+}
+
+.description-textarea:focus {
+    outline: none;
+    border-color: #0079bf;
+    box-shadow: 0 0 0 1px #0079bf;
+}
+
+/* Sublist Container */
+.sublist-container {
+    margin-bottom: 12px;
+    min-height: 50px;
+}
+
+.sublist-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    background-color: #f4f5f7;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.sublist-item:hover {
+    background-color: #ebecf0;
+}
+
+.sublist-item.completed {
+    opacity: 0.6;
+}
+
+.sublist-item.completed .sublist-text {
+    text-decoration: line-through;
+    color: #5e6c84;
+}
+
+.sublist-checkbox {
+    margin-right: 10px;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.sublist-text {
+    flex: 1;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.delete-sublist-btn {
+    background: none;
+    border: none;
+    color: #eb5a46;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.delete-sublist-btn:hover {
+    background-color: #ffebe6;
+}
+
+/* Add Sublist Item */
+.add-sublist-item {
+    display: flex;
+    gap: 8px;
+}
+
+.sublist-input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.sublist-input:focus {
+    outline: none;
+    border-color: #0079bf;
+    box-shadow: 0 0 0 1px #0079bf;
+}
+
+/* Checklist Selection View */
+.checklist-selection {
+    padding: 8px 0;
+}
+
+.checklist-group {
+    margin-bottom: 24px;
+}
+
+.checklist-items {
+    margin-top: 8px;
+}
+
+.checklist-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    margin-bottom: 6px;
+    background-color: #f4f5f7;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.checklist-item-row:hover {
+    background-color: #ebecf0;
+}
+
+.item-name {
+    flex: 1;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.item-badges {
+    display: flex;
+    gap: 6px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #0079bf;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Settings View */
+.settings-view {
+    padding: 8px 0;
+}
+
+.settings-view ul {
+    list-style-position: inside;
+    margin-left: 0;
+}
+
+.settings-view ol {
+    list-style-position: inside;
+    margin-left: 0;
+}
+
+.settings-view li {
+    margin-bottom: 8px;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 24px;
+    text-align: center;
+    color: #5e6c84;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    body {
+        padding: 8px;
+    }
+
+    .add-sublist-item {
+        flex-direction: column;
+    }
+
+    .button {
+        width: 100%;
+    }
+}
+
+/* Loading States */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+}
+
+.loading::after {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0079bf;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

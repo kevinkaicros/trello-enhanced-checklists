@@ -1,0 +1,23 @@
+{
+  "name": "Enhanced Checklists",
+  "details": "Add sublists and descriptions to your Trello checklist items for better organization",
+  "icon": {
+    "url": "./icons/icon.png"
+  },
+  "author": "Your Name",
+  "capabilities": [
+    "card-buttons",
+    "card-badges",
+    "show-settings"
+  ],
+  "connectors": {
+    "iframe": {
+      "url": "./index.html"
+    }
+  },
+  "tags": [
+    "productivity",
+    "organization",
+    "checklists"
+  ]
+}
