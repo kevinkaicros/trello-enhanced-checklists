@@ -160,13 +160,30 @@ document.addEventListener('DOMContentLoaded', async function() {
         const t = window.TrelloPowerUp.iframe();
 
         // Get the view type from args
-        const context = t.getContext();
-        const args = await t.arg('view');
-        const view = args || context.view;
+        let view = null;
+        try {
+            view = await t.arg('view');
+        } catch (argError) {
+            // If arg('view') fails, try to get it from context
+            try {
+                const context = t.getContext();
+                view = context && context.view ? context.view : null;
+            } catch (contextError) {
+                // Context doesn't exist or doesn't have view
+                view = null;
+            }
+        }
 
         // Only render content if we have a specific view (i.e., opened as popup/modal)
         if (!view) {
             // This is the connector iframe, no content should be rendered
+            console.log('No view specified - running as connector iframe');
+            return;
+        }
+
+        // Check if required managers are available
+        if (typeof window.UIManager === 'undefined') {
+            console.error('UIManager not loaded yet');
             return;
         }
 
@@ -175,20 +192,29 @@ document.addEventListener('DOMContentLoaded', async function() {
             const checkItemId = await t.arg('checkItemId');
             const checkItemName = await t.arg('checkItemName');
 
-            await UIManager.renderItemDetailView(t, {
-                checkItemId,
-                checkItemName
-            });
+            if (checkItemId && checkItemName) {
+                await UIManager.renderItemDetailView(t, {
+                    checkItemId,
+                    checkItemName
+                });
+            } else {
+                console.error('Missing required args for item-detail view');
+            }
         } else if (view === 'checklist-selection') {
             await UIManager.renderChecklistSelection(t);
         } else if (view === 'settings') {
             await UIManager.renderSettingsView(t);
+        } else {
+            console.warn('Unknown view:', view);
         }
 
         // Size the iframe to fit content
-        t.sizeTo('#content');
+        t.sizeTo('#content').catch(function(err) {
+            console.warn('Could not resize iframe:', err);
+        });
     } catch (error) {
         // If we're not in a Trello iframe context, do nothing
-        console.error('Not in a Trello Power-Up context:', error);
+        // This is expected for the connector iframe
+        console.log('Running as connector iframe (not a popup)');
     }
 });
