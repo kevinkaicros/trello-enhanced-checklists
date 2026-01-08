@@ -10,76 +10,98 @@ window.TrelloPowerUp.initialize({
      * Adds a button to the card back to manage enhanced checklists
      */
     'card-buttons': function(t, options) {
-        return [{
-            icon: 'https://cdn-icons-png.flaticon.com/512/2099/2099058.png',
-            text: 'Manage Enhanced Checklists',
-            callback: async function(t) {
-                return t.popup({
-                    title: 'Enhanced Checklists',
-                    url: './index.html',
-                    height: 400,
-                    args: {
-                        view: 'checklist-selection'
-                    }
-                });
-            },
-            condition: 'always'
-        }];
+        try {
+            return [{
+                icon: 'https://cdn-icons-png.flaticon.com/512/2099/2099058.png',
+                text: 'Manage Enhanced Checklists',
+                callback: function(t) {
+                    return t.popup({
+                        title: 'Enhanced Checklists',
+                        url: './index.html',
+                        height: 400,
+                        args: {
+                            view: 'checklist-selection'
+                        }
+                    });
+                },
+                condition: 'always'
+            }];
+        } catch (error) {
+            console.error('Error in card-buttons:', error);
+            return [];
+        }
     },
 
     /**
      * Card Badges
      * Shows badges on card front indicating enhanced checklist items
      */
-    'card-badges': async function(t, options) {
-        const card = await t.card('checklists');
-        const checklists = card.checklists || [];
-
-        if (checklists.length === 0) {
-            return [];
-        }
-
-        let totalEnhanced = 0;
-        let totalSublistItems = 0;
-        let completedSublistItems = 0;
-
-        // Count enhanced items
-        for (const checklist of checklists) {
-            if (checklist.checkItems) {
-                for (const item of checklist.checkItems) {
-                    const stats = await ChecklistManager.getItemStats(t, item.id);
-
-                    if (stats.hasDescription || stats.totalSublistItems > 0) {
-                        totalEnhanced++;
-                    }
-
-                    totalSublistItems += stats.totalSublistItems;
-                    completedSublistItems += stats.completedSublistItems;
+    'card-badges': function(t, options) {
+        return Promise.resolve()
+            .then(async function() {
+                // Check if ChecklistManager is available
+                if (typeof window.ChecklistManager === 'undefined') {
+                    console.warn('ChecklistManager not available yet');
+                    return [];
                 }
-            }
-        }
 
-        const badges = [];
+                const card = await t.card('checklists');
+                const checklists = card.checklists || [];
 
-        // Show badge if there are enhanced items
-        if (totalEnhanced > 0) {
-            badges.push({
-                icon: 'https://cdn-icons-png.flaticon.com/512/4697/4697260.png',
-                text: `${totalEnhanced} enhanced`,
-                color: 'blue'
+                if (checklists.length === 0) {
+                    return [];
+                }
+
+                let totalEnhanced = 0;
+                let totalSublistItems = 0;
+                let completedSublistItems = 0;
+
+                // Count enhanced items
+                for (const checklist of checklists) {
+                    if (checklist.checkItems) {
+                        for (const item of checklist.checkItems) {
+                            try {
+                                const stats = await ChecklistManager.getItemStats(t, item.id);
+
+                                if (stats.hasDescription || stats.totalSublistItems > 0) {
+                                    totalEnhanced++;
+                                }
+
+                                totalSublistItems += stats.totalSublistItems;
+                                completedSublistItems += stats.completedSublistItems;
+                            } catch (error) {
+                                console.error('Error getting item stats:', error);
+                            }
+                        }
+                    }
+                }
+
+                const badges = [];
+
+                // Show badge if there are enhanced items
+                if (totalEnhanced > 0) {
+                    badges.push({
+                        icon: 'https://cdn-icons-png.flaticon.com/512/4697/4697260.png',
+                        text: `${totalEnhanced} enhanced`,
+                        color: 'blue'
+                    });
+                }
+
+                // Show sublist progress badge
+                if (totalSublistItems > 0) {
+                    const progress = Math.round((completedSublistItems / totalSublistItems) * 100);
+                    badges.push({
+                        text: `Sublist: ${completedSublistItems}/${totalSublistItems}`,
+                        color: progress === 100 ? 'green' : 'yellow'
+                    });
+                }
+
+                return badges;
+            })
+            .catch(function(error) {
+                console.error('Error in card-badges:', error);
+                return [];
             });
-        }
-
-        // Show sublist progress badge
-        if (totalSublistItems > 0) {
-            const progress = Math.round((completedSublistItems / totalSublistItems) * 100);
-            badges.push({
-                text: `Sublist: ${completedSublistItems}/${totalSublistItems}`,
-                color: progress === 100 ? 'green' : 'yellow'
-            });
-        }
-
-        return badges;
     },
 
     /**
@@ -87,14 +109,22 @@ window.TrelloPowerUp.initialize({
      * Displays Power-Up settings and help
      */
     'show-settings': function(t, options) {
-        return t.popup({
-            title: 'Enhanced Checklists Settings',
-            url: './index.html',
-            height: 300,
-            args: {
-                view: 'settings'
-            }
-        });
+        try {
+            return t.popup({
+                title: 'Enhanced Checklists Settings',
+                url: './index.html',
+                height: 300,
+                args: {
+                    view: 'settings'
+                }
+            });
+        } catch (error) {
+            console.error('Error in show-settings:', error);
+            return t.alert({
+                message: 'Failed to open settings. Please try again.',
+                duration: 5
+            });
+        }
     },
 
     /**
@@ -102,11 +132,15 @@ window.TrelloPowerUp.initialize({
      * Called when the Power-Up is enabled on a board
      */
     'on-enable': function(t, options) {
-        console.log('Enhanced Checklists Power-Up enabled');
-        return t.alert({
-            message: 'Enhanced Checklists Power-Up is now active! Click on any card to get started.',
-            duration: 5
-        });
+        try {
+            console.log('Enhanced Checklists Power-Up enabled');
+            return t.alert({
+                message: 'Enhanced Checklists Power-Up is now active! Click on any card to get started.',
+                duration: 5
+            });
+        } catch (error) {
+            console.error('Error in on-enable:', error);
+        }
     }
 }, {
     appKey: 'a3495d762586470e3473a32fcf0eb1f5', // Replace with your actual app key from Trello
