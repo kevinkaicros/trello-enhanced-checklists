@@ -115,44 +115,45 @@ window.TrelloPowerUp.initialize({
 /**
  * Route handler for different views
  * Determines which UI to render based on the args passed
+ * This section handles popup/modal content rendering using t.iframe()
  */
-window.TrelloPowerUp.initialize({
-    'show-settings': function(t, options) {
-        return t.modal({
-            url: './index.html',
-            height: 500,
-            args: { view: 'settings' }
-        });
-    }
-});
 
 // Handle routing when the page loads
 document.addEventListener('DOMContentLoaded', async function() {
-    const t = window.TrelloPowerUp.iframe();
+    // Check if we're in an iframe context (popup/modal) vs connector context
+    try {
+        const t = window.TrelloPowerUp.iframe();
 
-    // Get the view type from args
-    const context = t.getContext();
-    const args = await t.arg('view');
-    const view = args || context.view;
+        // Get the view type from args
+        const context = t.getContext();
+        const args = await t.arg('view');
+        const view = args || context.view;
 
-    // Route to the appropriate view
-    if (view === 'item-detail') {
-        const checkItemId = await t.arg('checkItemId');
-        const checkItemName = await t.arg('checkItemName');
+        // Only render content if we have a specific view (i.e., opened as popup/modal)
+        if (!view) {
+            // This is the connector iframe, no content should be rendered
+            return;
+        }
 
-        await UIManager.renderItemDetailView(t, {
-            checkItemId,
-            checkItemName
-        });
-    } else if (view === 'checklist-selection') {
-        await UIManager.renderChecklistSelection(t);
-    } else if (view === 'settings') {
-        await UIManager.renderSettingsView(t);
-    } else {
-        // Default view
-        await UIManager.renderChecklistSelection(t);
+        // Route to the appropriate view
+        if (view === 'item-detail') {
+            const checkItemId = await t.arg('checkItemId');
+            const checkItemName = await t.arg('checkItemName');
+
+            await UIManager.renderItemDetailView(t, {
+                checkItemId,
+                checkItemName
+            });
+        } else if (view === 'checklist-selection') {
+            await UIManager.renderChecklistSelection(t);
+        } else if (view === 'settings') {
+            await UIManager.renderSettingsView(t);
+        }
+
+        // Size the iframe to fit content
+        t.sizeTo('#content');
+    } catch (error) {
+        // If we're not in a Trello iframe context, do nothing
+        console.error('Not in a Trello Power-Up context:', error);
     }
-
-    // Size the iframe to fit content
-    t.sizeTo('#content');
 });
