@@ -11,7 +11,7 @@ window.TrelloPowerUp.initialize({
      */
     'card-buttons': function(t, options) {
         return [{
-            icon: 'https://cdn-icons-png.flaticon.com/512/2609/2609170.png',
+            icon: 'https://cdn-icons-png.flaticon.com/512/2099/2099058.png',
             text: 'Manage Enhanced Checklists',
             callback: async function(t) {
                 return t.popup({
@@ -63,7 +63,7 @@ window.TrelloPowerUp.initialize({
         // Show badge if there are enhanced items
         if (totalEnhanced > 0) {
             badges.push({
-                icon: 'https://cdn-icons-png.flaticon.com/512/2609/2609170.png',
+                icon: 'https://cdn-icons-png.flaticon.com/512/4697/4697260.png',
                 text: `${totalEnhanced} enhanced`,
                 color: 'blue'
             });
@@ -108,7 +108,7 @@ window.TrelloPowerUp.initialize({
         });
     }
 }, {
-    appKey: 'YOUR_APP_KEY_HERE', // Replace with your actual app key from Trello
+    appKey: 'a3495d762586470e3473a32fcf0eb1f5', // Replace with your actual app key from Trello
     appName: 'Enhanced Checklists'
 });
 
