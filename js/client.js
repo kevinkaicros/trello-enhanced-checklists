@@ -22,7 +22,8 @@ window.TrelloPowerUp.initialize({
                         view: 'checklist-selection'
                     }
                 });
-            }
+            },
+            condition: 'always'
         }];
     },
 
