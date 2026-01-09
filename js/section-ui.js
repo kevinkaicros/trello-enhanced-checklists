@@ -164,21 +164,6 @@ const SectionUI = {
                 html += '<p class="empty-state">No items in this checklist</p>';
             }
 
-            // Add new item button at the bottom of each checklist
-            html += `
-                <div class="add-item-section">
-                    <button class="button-link add-item-btn" data-checklist-id="${checklist.id}">
-                        + Add Item
-                    </button>
-                </div>
-                <div id="new-item-form-${checklist.id}" class="new-item-form" style="display: none;">
-                    <input type="text" id="new-item-input-${checklist.id}" class="item-input" placeholder="Enter item name...">
-                    <div class="form-actions">
-                        <button class="button primary save-item-btn" data-checklist-id="${checklist.id}">Add</button>
-                        <button class="button cancel-item-btn" data-checklist-id="${checklist.id}">Cancel</button>
-                    </div>
-                </div>`;
-
             html += '</div></div>';
         }
 
@@ -327,39 +312,7 @@ const SectionUI = {
 
         // ===== Check Item Management =====
 
-        // Add item buttons
-        document.querySelectorAll('.add-item-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const checklistId = e.target.dataset.checklistId;
-                this.showNewItemForm(checklistId);
-            });
-        });
-
-        // Save new item
-        document.querySelectorAll('.save-item-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                const checklistId = e.target.dataset.checklistId;
-                await this.createNewItem(checklistId);
-            });
-        });
-
-        // Cancel new item
-        document.querySelectorAll('.cancel-item-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const checklistId = e.target.dataset.checklistId;
-                this.hideNewItemForm(checklistId);
-            });
-        });
-
-        // Enter key to create item
-        document.querySelectorAll('.item-input').forEach(input => {
-            input.addEventListener('keypress', async (e) => {
-                if (e.key === 'Enter') {
-                    const checklistId = e.target.closest('.new-item-form').id.replace('new-item-form-', '');
-                    await this.createNewItem(checklistId);
-                }
-            });
-        });
+        // (Removed redundant 'Add Item' functionality)
 
         // ===== Sublist Management =====
 
@@ -668,49 +621,9 @@ const SectionUI = {
     },
 
     // ===== Check Item Management Functions =====
+    
+    // (Removed redundant 'Add Item' functionality)
 
-    showNewItemForm(checklistId) {
-        const form = document.getElementById(`new-item-form-${checklistId}`);
-        const input = document.getElementById(`new-item-input-${checklistId}`);
-        if (form && input) {
-            form.style.display = 'block';
-            input.focus();
-            t.sizeTo('#section-content');
-        }
-    },
-
-    hideNewItemForm(checklistId) {
-        const form = document.getElementById(`new-item-form-${checklistId}`);
-        const input = document.getElementById(`new-item-input-${checklistId}`);
-        if (form && input) {
-            form.style.display = 'none';
-            input.value = '';
-            t.sizeTo('#section-content');
-        }
-    },
-
-    async createNewItem(checklistId) {
-        const input = document.getElementById(`new-item-input-${checklistId}`);
-        const name = input.value.trim();
-
-        if (!name) {
-            return;
-        }
-
-        try {
-            await ChecklistManager.addCheckItem(t, checklistId, name);
-            console.log('[SECTION-UI] Check item created');
-
-            // Reload checklists
-            await this.loadChecklists();
-        } catch (error) {
-            console.error('[SECTION-UI] Error creating check item:', error);
-            t.alert({
-                message: 'Failed to add item',
-                duration: 3
-            });
-        }
-    }
 };
 
 // Initialize when the window loads
