@@ -44,7 +44,6 @@ const UIManager = {
                             class="sublist-input"
                             placeholder="Add a new sublist item..."
                         />
-                        <button id="add-sublist-btn" class="button primary">Add Item</button>
                     </div>
                 </div>
             </div>
@@ -111,8 +110,6 @@ const UIManager = {
                 this._attachSublistListeners(t, checkItemId);
             }
         };
-
-        document.getElementById('add-sublist-btn').addEventListener('click', addSublistItem);
 
         // Allow Enter key to add item
         document.getElementById('new-sublist-input').addEventListener('keypress', (e) => {
