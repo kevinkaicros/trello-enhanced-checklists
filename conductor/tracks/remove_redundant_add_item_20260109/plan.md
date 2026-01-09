@@ -1,8 +1,8 @@
 # Plan: UI/UX 優化：移除冗餘的 Add Item 功能
 
 ## Phase 1: 分析與定位
-- [ ] Task: 深入分析 `js/ui.js` 中 `#add-sublist-btn` 的邏輯鏈結
-- [ ] Task: 分析 `js/section-ui.js` 中 `+ Add Item` 按鈕在不同視圖下的呈現邏輯
+- [x] Task: 深入分析 `js/ui.js` 中 `#add-sublist-btn` 的邏輯鏈結
+- [x] Task: 分析 `js/section-ui.js` 中 `+ Add Item` 按鈕在不同視圖下的呈現邏輯
 - [ ] Task: Conductor - User Manual Verification '分析與定位' (Protocol in workflow.md)
 
 ## Phase 2: 執行移除與清理
