@@ -184,30 +184,8 @@ const ChecklistManager = {
     },
 
     /**
-     * Add a new check item to a checklist
-     * @param {Object} t - Trello Power-Up interface
-     * @param {string} checklistId - Checklist ID
-     * @param {string} itemName - Name of the new check item
-     * @returns {Promise<Object>} Created check item data
-     */
-    async addCheckItem(t, checklistId, itemName) {
-        const restApi = t.getRestApi();
-        const token = await restApi.getToken();
+     * Update checklist name
 
-        const response = await fetch(
-            `https://api.trello.com/1/checklists/${checklistId}/checkItems?name=${encodeURIComponent(itemName)}&key=a3495d762586470e3473a32fcf0eb1f5&token=${token}`,
-            { method: 'POST' }
-        );
-
-        if (!response.ok) {
-            throw new Error(`Failed to add check item: ${response.status}`);
-        }
-
-        return await response.json();
-    },
-
-    /**
-     * Delete a check item from a checklist
      * @param {Object} t - Trello Power-Up interface
      * @param {string} cardId - Card ID
      * @param {string} checkItemId - Check item ID to delete
