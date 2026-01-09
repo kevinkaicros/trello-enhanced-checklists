@@ -215,6 +215,15 @@ const UIManager = {
         const card = await t.card('checklists');
         const checklists = card.checklists || [];
 
+        // Debug: Print card data
+        console.log('[UI] Card data:', card);
+        console.log('[UI] Checklists:', checklists);
+        if (checklists && checklists.length > 0) {
+            checklists.forEach((cl, index) => {
+                console.log(`[UI] Checklist ${index}: ${cl.name}, Items:`, cl.checkItems);
+            });
+        }
+
         const content = document.getElementById('content');
 
         if (checklists.length === 0) {
