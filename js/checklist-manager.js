@@ -67,19 +67,6 @@ const ChecklistManager = {
         return itemData;
     },
 
-    /**
-     * Set description for a checklist item
-     * @param {Object} t - Trello Power-Up interface
-     * @param {string} checkItemId - Checklist item ID
-     * @param {string} description - Description text
-     * @returns {Promise<Object>} Updated item data
-     */
-    async setDescription(t, checkItemId, description) {
-        const itemData = await StorageManager.getItemData(t, checkItemId);
-        itemData.description = description;
-        await StorageManager.setItemData(t, checkItemId, itemData);
-        return itemData;
-    },
 
     /**
      * Get statistics for a checklist item
@@ -98,7 +85,6 @@ const ChecklistManager = {
         return {
             totalSublistItems,
             completedSublistItems,
-            hasDescription: !!itemData.description,
             progress: totalSublistItems > 0
                 ? Math.round((completedSublistItems / totalSublistItems) * 100)
                 : 0

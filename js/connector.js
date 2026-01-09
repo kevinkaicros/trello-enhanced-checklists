@@ -6,44 +6,29 @@
 
 console.log('[CONNECTOR] Starting Enhanced Checklists Power-Up initialization');
 
+var GRAY_ICON = 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-gray.svg';
+
 // Initialize the Power-Up
 window.TrelloPowerUp.initialize({
     /**
-     * Card Buttons
-     * Adds a button to the card back to manage enhanced checklists
+     * Card Back Section
+     * Displays an iframe on the back of a card with checklist items and quick add functionality
      */
-    'card-buttons': function(t, options) {
-        console.log('[CONNECTOR] card-buttons capability called');
+    'card-back-section': function(t, options) {
+        console.log('[CONNECTOR] card-back-section capability called');
         try {
-            return [{
-                icon: 'https://cdn-icons-png.flaticon.com/512/2099/2099058.png',
-                text: 'Manage Enhanced Checklists',
-                callback: function(t) {
-                    console.log('[CONNECTOR] Button clicked! Opening popup...');
-                    console.log('[CONNECTOR] Popup config:', {
-                        title: 'Enhanced Checklists',
-                        url: './index.html',
-                        height: 400,
-                        args: { view: 'checklist-selection' }
-                    });
-                    return t.popup({
-                        title: 'Enhanced Checklists',
-                        url: './index.html',
-                        height: 400,
-                        args: {
-                            view: 'checklist-selection'
-                        }
-                    }).then(function() {
-                        console.log('[CONNECTOR] Popup opened successfully');
-                    }).catch(function(err) {
-                        console.error('[CONNECTOR] Error opening popup:', err);
-                    });
-                },
-                condition: 'always'
-            }];
+            return {
+                title: 'Enhanced Checklists',
+                icon: GRAY_ICON,
+                content: {
+                    type: 'iframe',
+                    url: t.signUrl('./section.html'),
+                    height: 400 // Will be dynamically adjusted by section content
+                }
+            };
         } catch (error) {
-            console.error('[CONNECTOR] Error in card-buttons:', error);
-            return [];
+            console.error('[CONNECTOR] Error in card-back-section:', error);
+            return null;
         }
     },
 
@@ -66,35 +51,6 @@ window.TrelloPowerUp.initialize({
     },
 
     /**
-     * Show Settings
-     * Displays Power-Up settings and help
-     */
-    'show-settings': function(t, options) {
-        console.log('[CONNECTOR] show-settings capability called');
-        try {
-            console.log('[CONNECTOR] Opening settings popup...');
-            return t.popup({
-                title: 'Enhanced Checklists Settings',
-                url: './index.html',
-                height: 300,
-                args: {
-                    view: 'settings'
-                }
-            }).then(function() {
-                console.log('[CONNECTOR] Settings popup opened successfully');
-            }).catch(function(err) {
-                console.error('[CONNECTOR] Error opening settings popup:', err);
-            });
-        } catch (error) {
-            console.error('[CONNECTOR] Error in show-settings:', error);
-            return t.alert({
-                message: 'Failed to open settings. Please try again.',
-                duration: 5
-            });
-        }
-    },
-
-    /**
      * On Enable
      * Called when the Power-Up is enabled on a board
      */
@@ -102,7 +58,7 @@ window.TrelloPowerUp.initialize({
         try {
             console.log('[CONNECTOR] Enhanced Checklists Power-Up enabled');
             return t.alert({
-                message: 'Enhanced Checklists Power-Up is now active! Click on any card to get started.',
+                message: 'Enhanced Checklists Power-Up is now active! Open any card to see enhanced checklists.',
                 duration: 5
             });
         } catch (error) {

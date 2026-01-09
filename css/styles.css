@@ -311,3 +311,136 @@ p {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Section UI Styles */
+#section-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.section-checklists {
+    padding: 4px 0;
+}
+
+.checklist-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #172b4d;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #dfe1e6;
+}
+
+.checklist-items-section {
+    margin-bottom: 20px;
+}
+
+.checklist-item-card {
+    background-color: #fff;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    padding: 12px;
+    margin-bottom: 10px;
+    transition: box-shadow 0.2s ease;
+}
+
+.checklist-item-card:hover {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.checklist-item-card.completed {
+    opacity: 0.7;
+    background-color: #f4f5f7;
+}
+
+.checklist-item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.check-icon {
+    font-size: 18px;
+    color: #5e6c84;
+    flex-shrink: 0;
+}
+
+.checklist-item-card.completed .check-icon {
+    color: #61bd4f;
+}
+
+.checklist-item-header .item-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #172b4d;
+}
+
+.add-sublist-btn {
+    padding: 6px 12px;
+    background-color: #0079bf;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s ease;
+}
+
+.add-sublist-btn:hover {
+    background-color: #026aa7;
+}
+
+.quick-add-form {
+    margin-top: 8px;
+    padding: 12px;
+    background-color: #f4f5f7;
+    border-radius: 3px;
+}
+
+.quick-add-form .sublist-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #dfe1e6;
+    border-radius: 3px;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.quick-add-form .sublist-input:focus {
+    outline: none;
+    border-color: #0079bf;
+    box-shadow: 0 0 0 1px #0079bf;
+}
+
+.form-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.form-actions .button {
+    padding: 6px 16px;
+    font-size: 13px;
+}
+
+.auth-required {
+    padding: 24px;
+    text-align: center;
+}
+
+.auth-required p {
+    margin-bottom: 16px;
+    color: #5e6c84;
+}
+
+.error-state {
+    padding: 24px;
+    text-align: center;
+    color: #eb5a46;
+    background-color: #ffebe6;
+    border-radius: 3px;
+    margin: 12px 0;
+}
