@@ -8,7 +8,10 @@ console.log('[CLIENT] Client script loaded');
 
 // Initialize the iframe context immediately
 // This MUST be called synchronously when the script loads to prevent timeout
-var t = window.TrelloPowerUp.iframe();
+var t = window.TrelloPowerUp.iframe({
+    appKey: 'a3495d762586470e3473a32fcf0eb1f5',
+    appName: 'Enhanced Checklists'
+});
 console.log('[CLIENT] TrelloPowerUp.iframe() initialized');
 
 // Handle routing and rendering
