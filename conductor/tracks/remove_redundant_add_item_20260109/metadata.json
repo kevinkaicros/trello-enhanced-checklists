@@ -1,0 +1,8 @@
+{
+  "track_id": "remove_redundant_add_item_20260109",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-01-09T10:00:00Z",
+  "updated_at": "2026-01-09T10:00:00Z",
+  "description": "UI/UX 優化：移除冗餘的 Add Item 功能"
+}
