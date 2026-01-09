@@ -155,42 +155,60 @@ window.TrelloPowerUp.initialize({
 
 // Handle routing when the page loads
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('[DEBUG] DOMContentLoaded event fired');
+
     // Check if we're in an iframe context (popup/modal) vs connector context
     let t;
     try {
+        console.log('[DEBUG] Attempting to initialize TrelloPowerUp.iframe()');
         t = window.TrelloPowerUp.iframe();
+        console.log('[DEBUG] TrelloPowerUp.iframe() initialized successfully');
     } catch (error) {
         // If we're not in a Trello iframe context, do nothing
         // This is expected for the connector iframe
-        console.log('Running as connector iframe (not a popup)');
+        console.log('[INFO] Running as connector iframe (not a popup)');
         return;
     }
 
     // Get the view type from args
     let view = null;
     try {
+        console.log('[DEBUG] Attempting to get view from t.arg("view")');
         view = await t.arg('view');
+        console.log('[DEBUG] Got view from t.arg:', view);
     } catch (argError) {
+        console.log('[DEBUG] t.arg("view") failed:', argError.message);
         // If arg('view') fails, try to get it from context
         try {
+            console.log('[DEBUG] Attempting to get view from context');
             const context = t.getContext();
+            console.log('[DEBUG] Got context:', context);
             view = context && context.view ? context.view : null;
+            console.log('[DEBUG] Extracted view from context:', view);
         } catch (contextError) {
+            console.log('[DEBUG] Getting context failed:', contextError.message);
             // Context doesn't exist or doesn't have view
             view = null;
         }
     }
 
+    console.log('[DEBUG] Final view value:', view);
+
     // Only render content if we have a specific view (i.e., opened as popup/modal)
     if (!view) {
         // This is the connector iframe, no content should be rendered
-        console.log('No view specified - running as connector iframe');
+        console.log('[INFO] No view specified - running as connector iframe');
         return;
     }
 
     // Check if required managers are available
+    console.log('[DEBUG] Checking if managers are loaded...');
+    console.log('[DEBUG] UIManager available:', typeof window.UIManager !== 'undefined');
+    console.log('[DEBUG] ChecklistManager available:', typeof window.ChecklistManager !== 'undefined');
+    console.log('[DEBUG] StorageManager available:', typeof window.StorageManager !== 'undefined');
+
     if (typeof window.UIManager === 'undefined') {
-        console.error('UIManager not loaded yet');
+        console.error('[ERROR] UIManager not loaded yet');
         const content = document.getElementById('content');
         if (content) {
             content.innerHTML = '<div style="padding: 20px; color: red;">Error: UI Manager not loaded. Please refresh the page.</div>';
@@ -199,7 +217,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     if (typeof window.ChecklistManager === 'undefined') {
-        console.error('ChecklistManager not loaded yet');
+        console.error('[ERROR] ChecklistManager not loaded yet');
         const content = document.getElementById('content');
         if (content) {
             content.innerHTML = '<div style="padding: 20px; color: red;">Error: Checklist Manager not loaded. Please refresh the page.</div>';
@@ -208,7 +226,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 
     if (typeof window.StorageManager === 'undefined') {
-        console.error('StorageManager not loaded yet');
+        console.error('[ERROR] StorageManager not loaded yet');
         const content = document.getElementById('content');
         if (content) {
             content.innerHTML = '<div style="padding: 20px; color: red;">Error: Storage Manager not loaded. Please refresh the page.</div>';
@@ -216,35 +234,44 @@ document.addEventListener('DOMContentLoaded', async function() {
         return;
     }
 
-    console.log('Routing to view:', view);
+    console.log('[SUCCESS] All managers loaded successfully');
+    console.log('[ROUTING] Routing to view:', view);
 
     try {
         // Route to the appropriate view
         if (view === 'item-detail') {
+            console.log('[ROUTING] Matched view: item-detail');
             const checkItemId = await t.arg('checkItemId');
             const checkItemName = await t.arg('checkItemName');
+            console.log('[DEBUG] checkItemId:', checkItemId);
+            console.log('[DEBUG] checkItemName:', checkItemName);
 
             if (checkItemId && checkItemName) {
-                console.log('Rendering item detail view for:', checkItemName);
+                console.log('[RENDERING] Rendering item detail view for:', checkItemName);
                 await UIManager.renderItemDetailView(t, {
                     checkItemId,
                     checkItemName
                 });
+                console.log('[SUCCESS] Item detail view rendered successfully');
             } else {
-                console.error('Missing required args for item-detail view');
+                console.error('[ERROR] Missing required args for item-detail view');
                 const content = document.getElementById('content');
                 if (content) {
                     content.innerHTML = '<div style="padding: 20px; color: red;">Error: Missing item information. Please try again.</div>';
                 }
             }
         } else if (view === 'checklist-selection') {
-            console.log('Rendering checklist selection view');
+            console.log('[ROUTING] Matched view: checklist-selection');
+            console.log('[RENDERING] Rendering checklist selection view');
             await UIManager.renderChecklistSelection(t);
+            console.log('[SUCCESS] Checklist selection view rendered successfully');
         } else if (view === 'settings') {
-            console.log('Rendering settings view');
+            console.log('[ROUTING] Matched view: settings');
+            console.log('[RENDERING] Rendering settings view');
             await UIManager.renderSettingsView(t);
+            console.log('[SUCCESS] Settings view rendered successfully');
         } else {
-            console.warn('Unknown view:', view);
+            console.warn('[WARNING] Unknown view:', view);
             const content = document.getElementById('content');
             if (content) {
                 content.innerHTML = `<div style="padding: 20px; color: orange;">Unknown view: ${view}</div>`;
@@ -252,11 +279,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         // Size the iframe to fit content
+        console.log('[DEBUG] Attempting to resize iframe to fit content');
         t.sizeTo('#content').catch(function(err) {
-            console.warn('Could not resize iframe:', err);
+            console.warn('[WARNING] Could not resize iframe:', err);
         });
     } catch (error) {
-        console.error('Error rendering view:', error);
+        console.error('[ERROR] Error rendering view:', error);
+        console.error('[ERROR] Error stack:', error.stack);
         const content = document.getElementById('content');
         if (content) {
             content.innerHTML = `<div style="padding: 20px; color: red;">Error: ${error.message}<br><br>Please check the console for details.</div>`;
