@@ -6,19 +6,26 @@
 
 console.log('[CLIENT] Client script loaded');
 
+// IMPORTANT: Initialize iframe context immediately to prevent timeout
+// Trello expects this to be called within 30 seconds
+let t;
+try {
+    console.log('[CLIENT] Immediately initializing TrelloPowerUp.iframe()');
+    t = window.TrelloPowerUp.iframe();
+    console.log('[CLIENT] TrelloPowerUp.iframe() initialized successfully');
+} catch (error) {
+    console.error('[CLIENT] Failed to initialize iframe context:', error);
+    // This page is not being loaded as a Trello iframe
+    t = null;
+}
+
 // Handle routing when the page loads
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('[CLIENT] DOMContentLoaded event fired');
 
-    // Check if we're in an iframe context (popup/modal)
-    let t;
-    try {
-        console.log('[CLIENT] Attempting to initialize TrelloPowerUp.iframe()');
-        t = window.TrelloPowerUp.iframe();
-        console.log('[CLIENT] TrelloPowerUp.iframe() initialized successfully');
-    } catch (error) {
-        // If we're not in a Trello iframe context, do nothing
-        console.log('[CLIENT] Not in iframe context:', error.message);
+    // Check if we successfully initialized the iframe context
+    if (!t) {
+        console.log('[CLIENT] No iframe context available - exiting');
         return;
     }
 
