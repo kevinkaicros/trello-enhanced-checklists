@@ -212,30 +212,64 @@ const UIManager = {
      * @param {Object} t - Trello Power-Up interface
      */
     async renderChecklistSelection(t) {
-        const card = await t.card('checklists');
-        const checklists = card.checklists || [];
+        // Get card ID first
+        const cardData = await t.card('id');
+        const cardId = cardData.id;
 
-        // Debug: Print card data
-        console.log('[UI] Card data:', card);
-        console.log('[UI] Checklists:', checklists);
-        if (checklists && checklists.length > 0) {
-            checklists.forEach((cl, index) => {
-                console.log(`[UI] Checklist ${index}: ${cl.name}, Items:`, cl.checkItems);
+        console.log('[UI] Card ID:', cardId);
+
+        // Use REST API to get checklists with checkItems
+        try {
+            const restApi = t.getRestApi();
+            const checklists = await restApi.getCardChecklists(cardId, {
+                checkItems: 'all'
             });
+
+            console.log('[UI] Checklists with items:', checklists);
+
+            const content = document.getElementById('content');
+
+            if (!checklists || checklists.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <p>No checklists found on this card.</p>
+                        <p>Please add a checklist first, then use this Power-Up to enhance it.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            this._renderChecklistItems(t, content, checklists);
+        } catch (error) {
+            console.error('[UI] Error fetching checklists:', error);
+            // Fallback to old method if REST API fails
+            const card = await t.card('checklists');
+            const checklists = card.checklists || [];
+
+            console.log('[UI] Fallback - Card data:', card);
+            console.log('[UI] Fallback - Checklists:', checklists);
+
+            const content = document.getElementById('content');
+
+            if (checklists.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <p>No checklists found on this card.</p>
+                        <p>Please add a checklist first, then use this Power-Up to enhance it.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            this._renderChecklistItems(t, content, checklists);
         }
+    },
 
-        const content = document.getElementById('content');
-
-        if (checklists.length === 0) {
-            content.innerHTML = `
-                <div class="empty-state">
-                    <p>No checklists found on this card.</p>
-                    <p>Please add a checklist first, then use this Power-Up to enhance it.</p>
-                </div>
-            `;
-            return;
-        }
-
+    /**
+     * Render checklist items (extracted method)
+     * @private
+     */
+    async _renderChecklistItems(t, content, checklists) {
         let html = '<div class="checklist-selection"><h2>Select a Checklist Item</h2>';
 
         for (const checklist of checklists) {
