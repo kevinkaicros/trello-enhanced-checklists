@@ -156,56 +156,99 @@ window.TrelloPowerUp.initialize({
 // Handle routing when the page loads
 document.addEventListener('DOMContentLoaded', async function() {
     // Check if we're in an iframe context (popup/modal) vs connector context
+    let t;
     try {
-        const t = window.TrelloPowerUp.iframe();
+        t = window.TrelloPowerUp.iframe();
+    } catch (error) {
+        // If we're not in a Trello iframe context, do nothing
+        // This is expected for the connector iframe
+        console.log('Running as connector iframe (not a popup)');
+        return;
+    }
 
-        // Get the view type from args
-        let view = null;
+    // Get the view type from args
+    let view = null;
+    try {
+        view = await t.arg('view');
+    } catch (argError) {
+        // If arg('view') fails, try to get it from context
         try {
-            view = await t.arg('view');
-        } catch (argError) {
-            // If arg('view') fails, try to get it from context
-            try {
-                const context = t.getContext();
-                view = context && context.view ? context.view : null;
-            } catch (contextError) {
-                // Context doesn't exist or doesn't have view
-                view = null;
-            }
+            const context = t.getContext();
+            view = context && context.view ? context.view : null;
+        } catch (contextError) {
+            // Context doesn't exist or doesn't have view
+            view = null;
         }
+    }
 
-        // Only render content if we have a specific view (i.e., opened as popup/modal)
-        if (!view) {
-            // This is the connector iframe, no content should be rendered
-            console.log('No view specified - running as connector iframe');
-            return;
+    // Only render content if we have a specific view (i.e., opened as popup/modal)
+    if (!view) {
+        // This is the connector iframe, no content should be rendered
+        console.log('No view specified - running as connector iframe');
+        return;
+    }
+
+    // Check if required managers are available
+    if (typeof window.UIManager === 'undefined') {
+        console.error('UIManager not loaded yet');
+        const content = document.getElementById('content');
+        if (content) {
+            content.innerHTML = '<div style="padding: 20px; color: red;">Error: UI Manager not loaded. Please refresh the page.</div>';
         }
+        return;
+    }
 
-        // Check if required managers are available
-        if (typeof window.UIManager === 'undefined') {
-            console.error('UIManager not loaded yet');
-            return;
+    if (typeof window.ChecklistManager === 'undefined') {
+        console.error('ChecklistManager not loaded yet');
+        const content = document.getElementById('content');
+        if (content) {
+            content.innerHTML = '<div style="padding: 20px; color: red;">Error: Checklist Manager not loaded. Please refresh the page.</div>';
         }
+        return;
+    }
 
+    if (typeof window.StorageManager === 'undefined') {
+        console.error('StorageManager not loaded yet');
+        const content = document.getElementById('content');
+        if (content) {
+            content.innerHTML = '<div style="padding: 20px; color: red;">Error: Storage Manager not loaded. Please refresh the page.</div>';
+        }
+        return;
+    }
+
+    console.log('Routing to view:', view);
+
+    try {
         // Route to the appropriate view
         if (view === 'item-detail') {
             const checkItemId = await t.arg('checkItemId');
             const checkItemName = await t.arg('checkItemName');
 
             if (checkItemId && checkItemName) {
+                console.log('Rendering item detail view for:', checkItemName);
                 await UIManager.renderItemDetailView(t, {
                     checkItemId,
                     checkItemName
                 });
             } else {
                 console.error('Missing required args for item-detail view');
+                const content = document.getElementById('content');
+                if (content) {
+                    content.innerHTML = '<div style="padding: 20px; color: red;">Error: Missing item information. Please try again.</div>';
+                }
             }
         } else if (view === 'checklist-selection') {
+            console.log('Rendering checklist selection view');
             await UIManager.renderChecklistSelection(t);
         } else if (view === 'settings') {
+            console.log('Rendering settings view');
             await UIManager.renderSettingsView(t);
         } else {
             console.warn('Unknown view:', view);
+            const content = document.getElementById('content');
+            if (content) {
+                content.innerHTML = `<div style="padding: 20px; color: orange;">Unknown view: ${view}</div>`;
+            }
         }
 
         // Size the iframe to fit content
@@ -213,8 +256,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.warn('Could not resize iframe:', err);
         });
     } catch (error) {
-        // If we're not in a Trello iframe context, do nothing
-        // This is expected for the connector iframe
-        console.log('Running as connector iframe (not a popup)');
+        console.error('Error rendering view:', error);
+        const content = document.getElementById('content');
+        if (content) {
+            content.innerHTML = `<div style="padding: 20px; color: red;">Error: ${error.message}<br><br>Please check the console for details.</div>`;
+        }
     }
 });
