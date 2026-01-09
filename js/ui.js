@@ -218,13 +218,17 @@ const UIManager = {
 
         console.log('[UI] Card ID:', cardId);
 
-        // Use REST API to get checklists with checkItems
+        // Fetch checklists with checkItems using Trello's public API endpoint
         try {
-            const restApi = t.getRestApi();
-            const checklists = await restApi.getCardChecklists(cardId, {
-                checkItems: 'all'
-            });
+            // Use the browser's fetch API to call Trello's REST API directly
+            // This works because Power-Ups run in Trello's context
+            const response = await fetch(`https://api.trello.com/1/cards/${cardId}/checklists?checkItems=all&checkItem_fields=all`);
 
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const checklists = await response.json();
             console.log('[UI] Checklists with items:', checklists);
 
             const content = document.getElementById('content');
@@ -242,7 +246,7 @@ const UIManager = {
             this._renderChecklistItems(t, content, checklists);
         } catch (error) {
             console.error('[UI] Error fetching checklists:', error);
-            // Fallback to old method if REST API fails
+            // Fallback to old method if fetch fails
             const card = await t.card('checklists');
             const checklists = card.checklists || [];
 
