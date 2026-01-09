@@ -6,9 +6,9 @@
 - [ ] Task: Conductor - User Manual Verification '分析與定位' (Protocol in workflow.md)
 
 ## Phase 2: 執行移除與清理
-- [ ] Task: 從 `js/ui.js` 中移除「Add Item」按鈕與其對應的 Enter 鍵監聽邏輯
-- [ ] Task: 從 `js/section-ui.js` 中移除 `+ Add Item` 相關的 DOM 生成與點擊事件
-- [ ] Task: 清理 `js/checklist-manager.js` 中僅被「Add Item」呼叫的內部函式（若有）
+- [x] Task: 從 `js/ui.js` 中移除「Add Item」按鈕與其對應的 Enter 鍵監聽邏輯 [0655eae]
+- [x] Task: 從 `js/section-ui.js` 中移除 `+ Add Item` 相關的 DOM 生成與點擊事件 [0bb81f4]
+- [x] Task: 清理 `js/checklist-manager.js` 中僅被「Add Item」呼叫的內部函式（若有） [35a1c6b]
 - [ ] Task: Conductor - User Manual Verification '執行移除與清理' (Protocol in workflow.md)
 
 ## Phase 3: 驗證與文件更新

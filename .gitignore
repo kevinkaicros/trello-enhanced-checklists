@@ -40,3 +40,8 @@ logs/
 **/api-keys.txt
 **/config.private.js
 
+
+# Project specific
+conductor/
+README.md
+QUICKSTART.md
