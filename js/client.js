@@ -3,6 +3,8 @@
  * Main entry point for the Enhanced Checklists Power-Up
  */
 
+console.log('[INIT] Starting Enhanced Checklists Power-Up initialization');
+
 // Initialize the Power-Up when DOM is ready
 window.TrelloPowerUp.initialize({
     /**
@@ -10,11 +12,19 @@ window.TrelloPowerUp.initialize({
      * Adds a button to the card back to manage enhanced checklists
      */
     'card-buttons': function(t, options) {
+        console.log('[CARD-BUTTONS] card-buttons capability called');
         try {
             return [{
                 icon: 'https://cdn-icons-png.flaticon.com/512/2099/2099058.png',
                 text: 'Manage Enhanced Checklists',
                 callback: function(t) {
+                    console.log('[CARD-BUTTONS] Button clicked! Opening popup...');
+                    console.log('[CARD-BUTTONS] Popup config:', {
+                        title: 'Enhanced Checklists',
+                        url: './index.html',
+                        height: 400,
+                        args: { view: 'checklist-selection' }
+                    });
                     return t.popup({
                         title: 'Enhanced Checklists',
                         url: './index.html',
@@ -22,12 +32,16 @@ window.TrelloPowerUp.initialize({
                         args: {
                             view: 'checklist-selection'
                         }
+                    }).then(function() {
+                        console.log('[CARD-BUTTONS] Popup opened successfully');
+                    }).catch(function(err) {
+                        console.error('[CARD-BUTTONS] Error opening popup:', err);
                     });
                 },
                 condition: 'always'
             }];
         } catch (error) {
-            console.error('Error in card-buttons:', error);
+            console.error('[CARD-BUTTONS] Error in card-buttons:', error);
             return [];
         }
     },
@@ -109,7 +123,9 @@ window.TrelloPowerUp.initialize({
      * Displays Power-Up settings and help
      */
     'show-settings': function(t, options) {
+        console.log('[SHOW-SETTINGS] show-settings capability called');
         try {
+            console.log('[SHOW-SETTINGS] Opening settings popup...');
             return t.popup({
                 title: 'Enhanced Checklists Settings',
                 url: './index.html',
@@ -117,9 +133,13 @@ window.TrelloPowerUp.initialize({
                 args: {
                     view: 'settings'
                 }
+            }).then(function() {
+                console.log('[SHOW-SETTINGS] Settings popup opened successfully');
+            }).catch(function(err) {
+                console.error('[SHOW-SETTINGS] Error opening settings popup:', err);
             });
         } catch (error) {
-            console.error('Error in show-settings:', error);
+            console.error('[SHOW-SETTINGS] Error in show-settings:', error);
             return t.alert({
                 message: 'Failed to open settings. Please try again.',
                 duration: 5
@@ -146,6 +166,8 @@ window.TrelloPowerUp.initialize({
     appKey: 'a3495d762586470e3473a32fcf0eb1f5', // Replace with your actual app key from Trello
     appName: 'Enhanced Checklists'
 });
+
+console.log('[INIT] Enhanced Checklists Power-Up initialized successfully');
 
 /**
  * Route handler for different views
