@@ -346,23 +346,34 @@ const SectionUI = {
      */
     async deleteSublistItem(itemId, sublistId) {
         try {
-            const confirmed = await t.confirm({
-                message: 'Delete this sub-task?',
+            // Use t.popup with type: 'confirm' instead of t.confirm
+            return t.popup({
+                type: 'confirm',
+                title: 'Delete Sub-task',
+                message: 'Are you sure you want to delete this sub-task?',
                 confirmText: 'Delete',
-                confirmStyle: 'danger'
+                confirmStyle: 'danger',
+                onConfirm: async (t) => {
+                    try {
+                        await ChecklistManager.deleteSublistItem(t, itemId, sublistId);
+                        console.log('[SECTION-UI] Sublist item deleted');
+
+                        // Close popup and reload checklists
+                        await t.closePopup();
+                        await this.loadChecklists();
+                    } catch (error) {
+                        console.error('[SECTION-UI] Error deleting sublist item:', error);
+                        t.alert({
+                            message: 'Failed to delete sub-task',
+                            duration: 3
+                        });
+                    }
+                }
             });
-
-            if (confirmed) {
-                await ChecklistManager.deleteSublistItem(t, itemId, sublistId);
-                console.log('[SECTION-UI] Sublist item deleted');
-
-                // Reload checklists
-                await this.loadChecklists();
-            }
         } catch (error) {
-            console.error('[SECTION-UI] Error deleting sublist item:', error);
+            console.error('[SECTION-UI] Error showing delete confirmation:', error);
             t.alert({
-                message: 'Failed to delete sub-task',
+                message: 'Failed to show delete confirmation',
                 duration: 3
             });
         }

@@ -11,6 +11,15 @@ var GRAY_ICON = 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4b
 // Initialize the Power-Up
 window.TrelloPowerUp.initialize({
     /**
+     * Card Buttons - Returning empty array (deprecated)
+     * Kept temporarily to avoid errors during transition
+     */
+    'card-buttons': function(t, options) {
+        console.log('[CONNECTOR] card-buttons called (deprecated, returning empty)');
+        return [];
+    },
+
+    /**
      * Card Back Section
      * Displays an iframe on the back of a card with checklist items and quick add functionality
      */
