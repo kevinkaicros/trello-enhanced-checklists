@@ -212,17 +212,58 @@ const UIManager = {
      * @param {Object} t - Trello Power-Up interface
      */
     async renderChecklistSelection(t) {
-        // Get card ID first
-        const cardData = await t.card('id');
-        const cardId = cardData.id;
+        const content = document.getElementById('content');
 
-        console.log('[UI] Card ID:', cardId);
-
-        // Fetch checklists with checkItems using Trello's public API endpoint
         try {
-            // Use the browser's fetch API to call Trello's REST API directly
-            // This works because Power-Ups run in Trello's context
-            const response = await fetch(`https://api.trello.com/1/cards/${cardId}/checklists?checkItems=all&checkItem_fields=all`);
+            // Get card ID
+            const cardData = await t.card('id');
+            const cardId = cardData.id;
+            console.log('[UI] Card ID:', cardId);
+
+            // Get REST API client
+            const restApi = t.getRestApi();
+
+            // Check if authorized
+            const isAuthorized = await restApi.isAuthorized();
+            console.log('[UI] Is authorized:', isAuthorized);
+
+            if (!isAuthorized) {
+                // Show authorization button
+                content.innerHTML = `
+                    <div class="auth-required">
+                        <h2>Authorization Required</h2>
+                        <p>This Power-Up needs permission to read your checklist items.</p>
+                        <button id="authorize-btn" class="button primary">Authorize Access</button>
+                    </div>
+                `;
+
+                document.getElementById('authorize-btn').addEventListener('click', async () => {
+                    try {
+                        await restApi.authorize({ scope: 'read' });
+                        console.log('[UI] Authorization successful');
+                        // Reload the view after authorization
+                        await this.renderChecklistSelection(t);
+                    } catch (error) {
+                        console.error('[UI] Authorization failed:', error);
+                        content.innerHTML = `
+                            <div class="error-state">
+                                <p>Authorization failed. Please try again.</p>
+                                <button id="retry-btn" class="button">Retry</button>
+                            </div>
+                        `;
+                        document.getElementById('retry-btn').addEventListener('click', () => {
+                            this.renderChecklistSelection(t);
+                        });
+                    }
+                });
+                return;
+            }
+
+            // Authorized - fetch checklists using REST API
+            const token = await restApi.getToken();
+            const response = await fetch(
+                `https://api.trello.com/1/cards/${cardId}/checklists?checkItems=all&checkItem_fields=all&key=a3495d762586470e3473a32fcf0eb1f5&token=${token}`
+            );
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -230,8 +271,6 @@ const UIManager = {
 
             const checklists = await response.json();
             console.log('[UI] Checklists with items:', checklists);
-
-            const content = document.getElementById('content');
 
             if (!checklists || checklists.length === 0) {
                 content.innerHTML = `
@@ -245,12 +284,11 @@ const UIManager = {
 
             this._renderChecklistItems(t, content, checklists);
         } catch (error) {
-            console.error('[UI] Error fetching checklists:', error);
-            // Fallback to old method if fetch fails
+            console.error('[UI] Error:', error);
+            // Fallback to basic view without checkItems
             const card = await t.card('checklists');
             const checklists = card.checklists || [];
 
-            console.log('[UI] Fallback - Card data:', card);
             console.log('[UI] Fallback - Checklists:', checklists);
 
             const content = document.getElementById('content');
