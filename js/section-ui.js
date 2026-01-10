@@ -280,7 +280,7 @@ const SectionUI = {
         // Edit checklist buttons
         document.querySelectorAll('.edit-checklist-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const checklistId = e.target.dataset.checklistId;
+                const checklistId = e.currentTarget.dataset.checklistId;
                 this.showEditChecklistForm(checklistId);
             });
         });
@@ -288,7 +288,7 @@ const SectionUI = {
         // Update checklist name
         document.querySelectorAll('.update-checklist-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                const checklistId = e.target.dataset.checklistId;
+                const checklistId = e.currentTarget.dataset.checklistId;
                 await this.updateChecklistName(checklistId);
             });
         });
@@ -296,7 +296,7 @@ const SectionUI = {
         // Cancel edit checklist
         document.querySelectorAll('.cancel-edit-checklist-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const checklistId = e.target.dataset.checklistId;
+                const checklistId = e.currentTarget.dataset.checklistId;
                 this.hideEditChecklistForm(checklistId);
             });
         });
@@ -304,8 +304,8 @@ const SectionUI = {
         // Delete checklist buttons
         document.querySelectorAll('.delete-checklist-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                const checklistId = e.target.dataset.checklistId;
-                const checklistName = e.target.dataset.checklistName;
+                const checklistId = e.currentTarget.dataset.checklistId;
+                const checklistName = e.currentTarget.dataset.checklistName;
                 await this.deleteChecklist(checklistId, checklistName);
             });
         });
@@ -319,7 +319,7 @@ const SectionUI = {
         // Add sublist button
         document.querySelectorAll('.add-sublist-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const itemId = e.target.dataset.itemId;
+                const itemId = e.currentTarget.dataset.itemId;
                 this.showQuickAddForm(itemId);
             });
         });
@@ -327,7 +327,7 @@ const SectionUI = {
         // Save sublist button
         document.querySelectorAll('.save-sublist-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                const itemId = e.target.dataset.itemId;
+                const itemId = e.currentTarget.dataset.itemId;
                 await this.addSublistItem(itemId);
             });
         });
@@ -335,7 +335,7 @@ const SectionUI = {
         // Cancel button
         document.querySelectorAll('.cancel-sublist-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const itemId = e.target.dataset.itemId;
+                const itemId = e.currentTarget.dataset.itemId;
                 this.hideQuickAddForm(itemId);
             });
         });
@@ -344,7 +344,7 @@ const SectionUI = {
         document.querySelectorAll('.sublist-input').forEach(input => {
             input.addEventListener('keypress', async (e) => {
                 if (e.key === 'Enter') {
-                    const itemId = e.target.dataset.itemId;
+                    const itemId = e.currentTarget.dataset.itemId;
                     await this.addSublistItem(itemId);
                 }
             });
@@ -353,9 +353,9 @@ const SectionUI = {
         // Sublist checkbox toggle
         document.querySelectorAll('.sublist-checkbox').forEach(checkbox => {
             checkbox.addEventListener('change', async (e) => {
-                const itemId = e.target.dataset.itemId;
-                const sublistId = e.target.dataset.sublistId;
-                const completed = e.target.checked;
+                const itemId = e.currentTarget.dataset.itemId;
+                const sublistId = e.currentTarget.dataset.sublistId;
+                const completed = e.currentTarget.checked;
                 await this.toggleSublistItem(itemId, sublistId, completed);
             });
         });
@@ -363,8 +363,8 @@ const SectionUI = {
         // Delete sublist button
         document.querySelectorAll('.delete-sublist-btn').forEach(btn => {
             btn.addEventListener('click', async (e) => {
-                const itemId = e.target.dataset.itemId;
-                const sublistId = e.target.dataset.sublistId;
+                const itemId = e.currentTarget.dataset.itemId;
+                const sublistId = e.currentTarget.dataset.sublistId;
                 await this.deleteSublistItem(itemId, sublistId);
             });
         });
@@ -455,34 +455,15 @@ const SectionUI = {
      */
     async deleteSublistItem(itemId, sublistId) {
         try {
-            // Use t.popup with type: 'confirm' instead of t.confirm
-            return t.popup({
-                type: 'confirm',
-                title: 'Delete Sub-task',
-                message: 'Are you sure you want to delete this sub-task?',
-                confirmText: 'Delete',
-                confirmStyle: 'danger',
-                onConfirm: async (t) => {
-                    try {
-                        await ChecklistManager.deleteSublistItem(t, itemId, sublistId);
-                        console.log('[SECTION-UI] Sublist item deleted');
+            await ChecklistManager.deleteSublistItem(t, itemId, sublistId);
+            console.log('[SECTION-UI] Sublist item deleted');
 
-                        // Close popup and reload checklists
-                        await t.closePopup();
-                        await this.loadChecklists();
-                    } catch (error) {
-                        console.error('[SECTION-UI] Error deleting sublist item:', error);
-                        t.alert({
-                            message: 'Failed to delete sub-task',
-                            duration: 3
-                        });
-                    }
-                }
-            });
+            // Reload checklists to show the update
+            await this.loadChecklists();
         } catch (error) {
-            console.error('[SECTION-UI] Error showing delete confirmation:', error);
+            console.error('[SECTION-UI] Error deleting sublist item:', error);
             t.alert({
-                message: 'Failed to show delete confirmation',
+                message: 'Failed to delete sub-task',
                 duration: 3
             });
         }
